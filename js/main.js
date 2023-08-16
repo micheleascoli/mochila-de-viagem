@@ -28,10 +28,14 @@ form.addEventListener("submit", (evento) => {
 
         atualizaElemento(itemAtual);
 
-        itens[existe.id] = itemAtual;
+        itens[itens.findIndex(elemento => elemento.id === existe.id)] = itemAtual;
         
     } else {
-        itemAtual.id = itens.length;
+        itemAtual.id = itens[itens.length-1] ? (itens[itens.length-1].id +1) : 0 ;
+
+        /*Outra forma de resolver a linha 34*/
+        //itemAtual.id = Date.now();
+        
         criaElemento(itemAtual);
         itens.push(itemAtual);
     }
@@ -52,11 +56,32 @@ function criaElemento(item) {
 
     novoItem.appendChild(numeroItem);
     novoItem.innerHTML += item.nome;
+
+    novoItem.appendChild(botaoDeleta(item.id))
     
     lista.appendChild(novoItem);
 }
 
 function atualizaElemento(item) {
-    //console.log(document.querySelector("[data-id='"+item.id+"']"))
+    console.log(document.querySelector("[data-id='"+item.id+"']"))
    document.querySelector("[data-id='"+item.id+"']").innerHTML = item.quantidade;
+}
+
+function botaoDeleta(id){
+    const elementoBotao = document.createElement("button");
+    elementoBotao.innerText = "X";
+    elementoBotao.addEventListener("click", function() {
+        deletaElemento(this.parentNode, id);
+    })
+     
+    return elementoBotao;
+}
+
+function deletaElemento(tag, id){
+    tag.remove();
+    itens.splice(itens.findIndex(elemento => elemento.id === id), 1); 
+    //1 - é de 1 item que vamos remover. 
+
+    localStorage.setItem("itens", JSON.stringify(itens));
+
 }
